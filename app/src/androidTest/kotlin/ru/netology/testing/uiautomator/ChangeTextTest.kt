@@ -114,18 +114,22 @@ class ChangeTextTest {
         val packageName = MODEL_PACKAGE
         waitForPackage(packageName)
 
-        // 1. Запоминаем текущий текст в TextView
+        // Ждём появления TextView на экране
+        device.wait(
+            Until.hasObject(By.res(packageName, "textToBeChanged")),
+            TIMEOUT
+        )
+
         val textBefore = device.findObject(
             By.res(packageName, "textToBeChanged")
         ).text
 
-        // 2. Вводим строку из пробелов (это тоже пустая строка)
         device.findObject(By.res(packageName, "userInput")).text = "   "
-
-        // 3. Нажимаем кнопку изменения
         device.findObject(By.res(packageName, "buttonChange")).click()
 
-        // 4. Проверяем, что текст не изменился
+        // Ждём, пока текст обновится (или не обновится)
+        Thread.sleep(500)
+
         val textAfter = device.findObject(
             By.res(packageName, "textToBeChanged")
         ).text
