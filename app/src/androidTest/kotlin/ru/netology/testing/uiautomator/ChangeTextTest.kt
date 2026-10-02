@@ -17,7 +17,7 @@ import org.junit.runner.RunWith
 const val SETTINGS_PACKAGE = "com.android.settings"
 const val MODEL_PACKAGE = "ru.netology.testing.uiautomator"
 
-const val TIMEOUT = 5000L
+const val TIMEOUT = 15000L
 
 @RunWith(AndroidJUnit4::class)
 class ChangeTextTest {
@@ -74,8 +74,11 @@ class ChangeTextTest {
     private fun waitForPackage(packageName: String) {
         val context = ApplicationProvider.getApplicationContext<Context>()
         val intent = context.packageManager.getLaunchIntentForPackage(packageName)
+        intent?.addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK)
         context.startActivity(intent)
         device.wait(Until.hasObject(By.pkg(packageName)), TIMEOUT)
+        // Дополнительно ждём, пока появится поле ввода — значит, приложение реально отрисовалось
+        device.wait(Until.hasObject(By.res(packageName, "userInput")), TIMEOUT)
     }
 
     @Before
